@@ -170,8 +170,13 @@ void ImageInit(void) { ///
 Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (width >= 0);
   assert (height >= 0);
-  assert (0 < maxval && maxval <= PixMax);
+  assert (0 < maxval && maxval <= PixMax);  
   // Insert your code here!
+  struct image* im=malloc(sizeof(im));
+  if (im==NULL){return NULL;} //a alocação de memória falhou
+  im->width=width;
+  im->height=height;
+  im->maxval=maxval;
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -182,6 +187,8 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
+  free(imgp);
+  imgp=NULL;
 }
 
 
@@ -321,6 +328,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 static inline int G(Image img, int x, int y) {
   int index;
   // Insert your code here!
+  index=y*img->width+x;
   assert (0 <= index && index < img->width*img->height);
   return index;
 }
@@ -356,6 +364,7 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  
 }
 
 /// Apply threshold to image.
