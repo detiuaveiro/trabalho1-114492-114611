@@ -10,8 +10,8 @@
 /// 2013, 2023
 
 // Student authors (fill in below):
+// NMec: 114492 Name: Francisco João Lopes Carvalho
 // NMec:  Name:
-// 
 // 
 // 
 // Date:
@@ -174,6 +174,8 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   // Insert your code here!
   struct image* im=malloc(sizeof(im));
   if (im==NULL){return NULL;} //a alocação de memória falhou
+  im->pixel=malloc(width*height*sizeof(im->pixel));
+  if (im->pixel==NULL){return NULL;}//a alocação de memória para o array falhou
   im->width=width;
   im->height=height;
   im->maxval=maxval;
@@ -187,6 +189,8 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
+  free((*imgp)->pixel);
+  (*imgp)->pixel=NULL;
   free(imgp);
   imgp=NULL;
 }
@@ -301,6 +305,16 @@ int ImageMaxval(Image img) { ///
 void ImageStats(Image img, uint8* min, uint8* max) { ///
   assert (img != NULL);
   // Insert your code here!
+  *max=img->pixel[0];
+  *min=img->pixel[0];
+  for (long index=0;index<img->height*img->width;index++){
+    if(img->pixel[index]>*max){
+      *max=img->pixel[index];
+    }
+    else if(img->pixel[index]<*min){
+      *min=img->pixel[index];
+    }
+  }
 }
 
 /// Check if pixel position (x,y) is inside img.
@@ -364,7 +378,9 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
-  
+  for (long index=0;index<img->height*img->width;index++){
+     img->pixel[index]=img->maxval - img->pixel[index];
+  }
 }
 
 /// Apply threshold to image.
@@ -373,6 +389,14 @@ void ImageNegative(Image img) { ///
 void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
+  for (long index=0;index<img->height*img->width;index++){
+    if(img->pixel[index]<thr){
+      img->pixel[index]=0;
+    }
+    else{
+      img->pixel[index]=img->maxval;
+    }
+  }
 }
 
 /// Brighten image by a factor.
@@ -381,10 +405,16 @@ void ImageThreshold(Image img, uint8 thr) { ///
 /// darken the image if factor<1.0.
 void ImageBrighten(Image img, double factor) { ///
   assert (img != NULL);
+  assert (factor >= 0.0);
   // ? assert (factor >= 0.0);
   // Insert your code here!
+  for (long index=0;index<img->height*img->width;index++){
+    int color=img->pixel[index]*factor;  
+    printf("%d",color);
+    if(color>img->maxval){color=img->maxval;}
+    img->pixel[index]=color;
+  }
 }
-
 
 /// Geometric transformations
 
