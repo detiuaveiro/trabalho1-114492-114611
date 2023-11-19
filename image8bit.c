@@ -464,8 +464,8 @@ Image ImageMirror(Image img) { ///
   Image imgm = NULL;
   long indexm;
   imgm = ImageCreate(ImageWidth(img), ImageHeight(img), ImageMaxval(img));
-  int success = (img = ImageCreate(ImageWidth(img), ImageHeight(img), (uint8)ImageMaxval(img))) != NULL;
-  for (long index=0;index<img->height*imgm->width;index++){
+  int success = (imgm = ImageCreate(ImageWidth(img), ImageHeight(img), (uint8)ImageMaxval(img))) != NULL;
+  for (long index=0;index<img->height*img->width;index++){
     indexm = index-((index+1)%ImageWidth(img))+(ImageWidth(img)-(((index+1)%ImageWidth(img))-1));
     imgm->pixel[index] = img->pixel[indexm];
   }
@@ -493,6 +493,23 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
+  Image imgc = NULL;
+  imgc = ImageCreate(w, h, ImageMaxval(img));
+  int success = (imgc = ImageCreate(w, h, (uint8)ImageMaxval(img))) != NULL;
+  long jump = ImageWidth(img)-w+1;
+  for (long yindex=0;yindex<imgc->height;yindex++){
+    for (long xindex=0;xindex<imgc->width;xindex++){
+      long index = (yindex*w)+xindex;
+      long origin = x+(y*ImageWidth(img));
+      imgc->pixel[index] = img->pixel[index+origin+(yindex*jump)];
+    }
+  }
+  // Cleanup
+  if (!success) {
+    errsave = errno;
+    errno = errsave;
+  }
+  return imgc;
 }
 
 
