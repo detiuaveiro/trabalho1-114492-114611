@@ -496,12 +496,9 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   Image imgc = NULL;
   imgc = ImageCreate(w, h, img->maxval);
   int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
-  long jump = img->width-w+1;
   for (long yindex=0;yindex<imgc->height;yindex++){
     for (long xindex=0;xindex<imgc->width;xindex++){
-      long index = (yindex*w)+xindex;
-      long origin = x+(y*img->width);
-      imgc->pixel[index] = img->pixel[index+origin+(yindex*jump)];
+      imgc->pixel[(yindex*imgc->width)+xindex] = img->pixel[xindex+x+(yindex+y)*img->width];
     }
   }
   // Cleanup
@@ -524,12 +521,9 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
-  long jump = img1->width-img2->width+1;
-  long origin = x+(y*img1->width);
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
-      long index = (yindex*img2->width)+xindex;
-      img1->pixel[index+origin+(yindex*jump)] = img2->pixel[index];
+      img1->pixel[xindex+x+(yindex+y)*img1->width] = img2->pixel[(yindex*img2->width)+xindex];
     }
   }
 }
@@ -545,14 +539,11 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
-  long jump = img1->width-img2->width+1;
-  long origin = x+(y*img1->width);
   if(alpha>1) {alpha = 1;}
   if(alpha<0) {alpha = 0;}
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
-      long index = (yindex*img2->width)+xindex;
-      img1->pixel[index+origin+(yindex*jump)] = img1->pixel[index+origin+(yindex*jump)]*(1-alpha) + img2->pixel[index]*alpha;
+      img1->pixel[xindex+x+(yindex+y)*img1->width] = img1->pixel[xindex+x+(yindex+y)*img1->width]*(1-alpha) + img2->pixel[(yindex*img2->width)+xindex]*alpha;
     }
   }
 }
