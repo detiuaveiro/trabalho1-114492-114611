@@ -565,6 +565,14 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
+  for (long yindex=0;yindex<img2->height;yindex++){
+    for (long xindex=0;xindex<img2->width;xindex++){
+      if (img1->pixel[xindex+x+(yindex+y)*img1->width]!=img2->pixel[xindex+yindex*img2->width]){
+        return 0;
+      }
+    }
+  }
+  return 1;
 }
 
 /// Locate a subimage inside another image.
@@ -575,6 +583,16 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+  for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){
+    for (long xindex=0;xindex<(img1->height)-(img2->width);xindex++){
+      if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){
+        (*px)=xindex;
+        (*py)=yindex;
+        return 1;
+      }
+    }
+  }
+  return 0;
 }
 
 
