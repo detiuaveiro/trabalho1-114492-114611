@@ -44,20 +44,20 @@ Sugere-se o desenvolvimento progressivo pela seguinte ordem:
    valgrind ./imageTool test/original.pgm save out.pgm`
    ```
    
-   Isto chama `ImageLoad`, que chama `ImageCreate`
-   e depois `ImageSave` e `ImageDestroy`.
+   Isto chama `ImageLoad`, que chama `ImageCreate`                `ImageLoad`: feito  `ImageCreate`: feito
+   e depois `ImageSave` e `ImageDestroy`.                         `ImageSave`: feito `ImageDestroy`:feito
    Verificar que toda a memória foi libertada.
-3. Completar a função interna `G`,
-   que é usada por `ImageSetPixel` e `ImageGePixel`.
-4. Completar `ImageStats`.
-   Se usar `ImageGePixel`, permitirá testar `G`.
+3. Completar a função interna `G`,                                `G`:feito
+   que é usada por `ImageSetPixel` e `ImageGePixel`.              `ImageSetPixel`:feito  `ImageGePixel`:feito
+4. Completar `ImageStats`.                                        `ImageStats`:feito
+   Se usar `ImageGePixel`, permitirá testar `G`.  
    Testar com `./imageTool test/original.pgm info`.
-5. Completar `ImageNegative`, `ImageThreshold`, `ImageBrighten`.
-6. Completar `ImageValidRect`.
-7. Completar `ImageMirror`, `ImageRotate`.
-8. Completar `ImageCrop`, `ImagePaste` e `ImageBlend`.
-9. Completar `ImageMatchSubImage` e `ImageLocateSubImage`.
-10. Completar `ImageBlur`.
+5. Completar `ImageNegative`, `ImageThreshold`, `ImageBrighten`.  `ImageNegative`:  `ImageThreshold`:  `ImageBrighten`:
+6. Completar `ImageValidRect`.                                    `ImageValidRect`:
+7. Completar `ImageMirror`, `ImageRotate`.                        `ImageMirror`:  `ImageRotate`:
+8. Completar `ImageCrop`, `ImagePaste` e `ImageBlend`.            `ImageCrop`:  `ImagePaste`:  `ImageBlend`:
+9. Completar `ImageMatchSubImage` e `ImageLocateSubImage`.        `ImageMatchSubImage`:  `ImageLocateSubImage`:
+10. Completar `ImageBlur`.                                        `ImageBlur`:
 
 Pode executar `make test1`, `make test2`, etc.
 para fazer testes simples a muitas destas funções.
