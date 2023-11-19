@@ -45,15 +45,15 @@ Sugere-se o desenvolvimento progressivo pela seguinte ordem:
    ```
    
    Isto chama `ImageLoad`, que chama `ImageCreate`                `ImageLoad`: feito  `ImageCreate`: feito
-   e depois `ImageSave` e `ImageDestroy`.                         `ImageSave`: feito `ImageDestroy`:feito
+   e depois `ImageSave` e `ImageDestroy`.                         `ImageSave`: feito `ImageDestroy`: feito
    Verificar que toda a memória foi libertada.
-3. Completar a função interna `G`,                                `G`:feito
-   que é usada por `ImageSetPixel` e `ImageGePixel`.              `ImageSetPixel`:feito  `ImageGePixel`:feito
-4. Completar `ImageStats`.                                        `ImageStats`:feito
+3. Completar a função interna `G`,                                `G`: feito
+   que é usada por `ImageSetPixel` e `ImageGePixel`.              `ImageSetPixel`: feito  `ImageGePixel`: feito
+4. Completar `ImageStats`.                                        `ImageStats`: feito
    Se usar `ImageGePixel`, permitirá testar `G`.  
    Testar com `./imageTool test/original.pgm info`.
 5. Completar `ImageNegative`, `ImageThreshold`, `ImageBrighten`.  `ImageNegative`:  `ImageThreshold`:  `ImageBrighten`:
-6. Completar `ImageValidRect`.                                    `ImageValidRect`:
+6. Completar `ImageValidRect`.                                    `ImageValidRect`: feito
 7. Completar `ImageMirror`, `ImageRotate`.                        `ImageMirror`:  `ImageRotate`:
 8. Completar `ImageCrop`, `ImagePaste` e `ImageBlend`.            `ImageCrop`:  `ImagePaste`:  `ImageBlend`:
 9. Completar `ImageMatchSubImage` e `ImageLocateSubImage`.        `ImageMatchSubImage`:  `ImageLocateSubImage`:
