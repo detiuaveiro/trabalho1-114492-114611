@@ -463,10 +463,10 @@ Image ImageMirror(Image img) { ///
   // Insert your code here!
   Image imgm = NULL;
   long indexm;
-  imgm = ImageCreate(ImageWidth(img), ImageHeight(img), ImageMaxval(img));
-  int success = (imgm = ImageCreate(ImageWidth(img), ImageHeight(img), (uint8)ImageMaxval(img))) != NULL;
+  imgm = ImageCreate(img->width, img->height, img->maxval);
+  int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
   for (long index=0;index<img->height*img->width;index++){
-    indexm = index-((index+1)%ImageWidth(img))+(ImageWidth(img)-(((index+1)%ImageWidth(img))-1));
+    indexm = index-((index+1)%img->width)+(img->width-(((index+1)%img->width)-1));
     imgm->pixel[index] = img->pixel[indexm];
   }
   // Cleanup
@@ -494,13 +494,13 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
   Image imgc = NULL;
-  imgc = ImageCreate(w, h, ImageMaxval(img));
-  int success = (imgc = ImageCreate(w, h, (uint8)ImageMaxval(img))) != NULL;
-  long jump = ImageWidth(img)-w+1;
+  imgc = ImageCreate(w, h, img->maxval);
+  int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
+  long jump = img->width-w+1;
   for (long yindex=0;yindex<imgc->height;yindex++){
     for (long xindex=0;xindex<imgc->width;xindex++){
       long index = (yindex*w)+xindex;
-      long origin = x+(y*ImageWidth(img));
+      long origin = x+(y*img->width);
       imgc->pixel[index] = img->pixel[index+origin+(yindex*jump)];
     }
   }
@@ -524,11 +524,11 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
-  long jump = ImageWidth(img1)-ImageWidth(img2)+1;
+  long jump = img1->width-img2->width+1;
+  long origin = x+(y*img1->width);
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
-      long index = (yindex*ImageWidth(img2))+xindex;
-      long origin = x+(y*ImageWidth(img1));
+      long index = (yindex*img2->width)+xindex;
       img1->pixel[index+origin+(yindex*jump)] = img2->pixel[index];
     }
   }
@@ -545,6 +545,16 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  long jump = img1->width-img2->width+1;
+  long origin = x+(y*img1->width);
+  if(alpha>1) {alpha = 1;}
+  if(alpha<0) {alpha = 0;}
+  for (long yindex=0;yindex<img2->height;yindex++){
+    for (long xindex=0;xindex<img2->width;xindex++){
+      long index = (yindex*img2->width)+xindex;
+      img1->pixel[index+origin+(yindex*jump)] = img1->pixel[index+origin+(yindex*jump)]*(1-alpha) + img2->pixel[index]*alpha;
+    }
+  }
 }
 
 /// Compare an image to a subimage of a larger image.
