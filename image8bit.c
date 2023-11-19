@@ -448,6 +448,7 @@ Image ImageRotate(Image img) { ///
        new_img->pixel[(new_img->width)-y-1+x*new_img->width]=img->pixel[x+y*img->width];
     }
   }
+  return new_img;
 }
 
 /// Mirror an image = flip left-right.
