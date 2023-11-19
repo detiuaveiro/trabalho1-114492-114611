@@ -179,6 +179,7 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   im->width=width;
   im->height=height;
   im->maxval=maxval;
+  return im;
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -327,6 +328,7 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
+  return (ImageValidPos(img, x, y) != 0) && (0 != w && 0 < x+w && x+w < img->width) && (0 != h && 0 < y+h && y+h < img->height);
 }
 
 /// Pixel get & set operations
