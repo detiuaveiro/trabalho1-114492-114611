@@ -328,7 +328,7 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
-  return (ImageValidPos(img, x, y) != 0) && (0 != w && 0 < x+w && x+w < img->width) && (0 != h && 0 < y+h && y+h < img->height);
+  return (ImageValidPos(img, x, y) != 0) && (w != 0 && x+w <= img->width) && (h != 0 && y+h <= img->height);
 }
 
 /// Pixel get & set operations
@@ -464,8 +464,8 @@ Image ImageMirror(Image img) { ///
   Image imgm = NULL;
   long indexm;
   imgm = ImageCreate(ImageWidth(img), ImageHeight(img), ImageMaxval(img));
-  int success = (img = ImageCreate(ImageWidth(img), ImageHeight(img), (uint8)ImageMaxval(img))) != NULL;
-  for (long index=0;index<img->height*imgm->width;index++){
+  int success = (imgm = ImageCreate(ImageWidth(img), ImageHeight(img), (uint8)ImageMaxval(img))) != NULL;
+  for (long index=0;index<img->height*img->width;index++){
     indexm = index-((index+1)%ImageWidth(img))+(ImageWidth(img)-(((index+1)%ImageWidth(img))-1));
     imgm->pixel[index] = img->pixel[indexm];
   }
@@ -493,6 +493,23 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
+  Image imgc = NULL;
+  imgc = ImageCreate(w, h, ImageMaxval(img));
+  int success = (imgc = ImageCreate(w, h, (uint8)ImageMaxval(img))) != NULL;
+  long jump = ImageWidth(img)-w+1;
+  for (long yindex=0;yindex<imgc->height;yindex++){
+    for (long xindex=0;xindex<imgc->width;xindex++){
+      long index = (yindex*w)+xindex;
+      long origin = x+(y*ImageWidth(img));
+      imgc->pixel[index] = img->pixel[index+origin+(yindex*jump)];
+    }
+  }
+  // Cleanup
+  if (!success) {
+    errsave = errno;
+    errno = errsave;
+  }
+  return imgc;
 }
 
 
@@ -507,6 +524,14 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  long jump = ImageWidth(img1)-ImageWidth(img2)+1;
+  for (long yindex=0;yindex<img2->height;yindex++){
+    for (long xindex=0;xindex<img2->width;xindex++){
+      long index = (yindex*ImageWidth(img2))+xindex;
+      long origin = x+(y*ImageWidth(img1));
+      img1->pixel[index+origin+(yindex*jump)] = img2->pixel[index];
+    }
+  }
 }
 
 /// Blend an image into a larger image.
