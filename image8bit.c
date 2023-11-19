@@ -328,7 +328,7 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
-  return (ImageValidPos(img, x, y) != 0) && (0 != w && 0 < x+w && x+w < img->width) && (0 != h && 0 < y+h && y+h < img->height);
+  return (ImageValidPos(img, x, y) != 0) && (w != 0 && x+w <= img->width) && (h != 0 && y+h <= img->height);
 }
 
 /// Pixel get & set operations
@@ -524,6 +524,14 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  long jump = ImageWidth(img1)-ImageWidth(img2)+1;
+  for (long yindex=0;yindex<img2->height;yindex++){
+    for (long xindex=0;xindex<img2->width;xindex++){
+      long index = (yindex*ImageWidth(img2))+xindex;
+      long origin = x+(y*ImageWidth(img1));
+      img1->pixel[index+origin+(yindex*jump)] = img2->pixel[index];
+    }
+  }
 }
 
 /// Blend an image into a larger image.
