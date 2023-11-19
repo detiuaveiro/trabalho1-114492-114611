@@ -460,6 +460,20 @@ Image ImageRotate(Image img) { ///
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  Image imgm = NULL;
+  long indexm;
+  imgm = ImageCreate(ImageWidth(img), ImageHeight(img), ImageMaxval(img));
+  int success = (img = ImageCreate(ImageWidth(img), ImageHeight(img), (uint8)ImageMaxval(img))) != NULL;
+  for (long index=0;index<img->height*imgm->width;index++){
+    indexm = index-((index+1)%ImageWidth(img))+(ImageWidth(img)-(((index+1)%ImageWidth(img))-1));
+    imgm->pixel[index] = img->pixel[indexm];
+  }
+  // Cleanup
+  if (!success) {
+    errsave = errno;
+    errno = errsave;
+  }
+  return imgm;
 }
 
 /// Crop a rectangular subimage from img.
