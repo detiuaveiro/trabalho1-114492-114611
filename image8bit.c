@@ -595,5 +595,27 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
+  int ycount = 0;
+  for (long yindex=0;yindex<img->height;yindex++){
+    int xcount = 0;
+    for (long xindex=0;xindex<img->width;xindex++){
+      int sum = 0, count = 0;
+      //if (ycount-dy<img->height)
+      //if (ycount+dy>img->height)
+      //if (xcount-dy<img->width)
+      //if (xcount+dy>img->width)
+      for (long ybindex=yindex-dy;ybindex<yindex+dx;ybindex++){
+        for (long xbindex=xindex-dx;xbindex<xindex+dy;xbindex++){
+          sum += img->pixel[(ybindex*img->width)+xbindex];
+          count++;
+        }
+      }
+      int mean = sum/count;
+      img->pixel[(yindex*img->width)+xindex] = 
+      img->pixel[(yindex*img->width)+xindex]*(1/(img->pixel[(yindex*img->width)+xindex]/(mean-img->pixel[(yindex*img->width)+xindex])));
+      xcount++;
+    }
+    ycount++;
+  }
 }
 
