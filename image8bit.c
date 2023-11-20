@@ -173,9 +173,17 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (0 < maxval && maxval <= PixMax);  
   // Insert your code here!
   struct image* im=malloc(sizeof(*im));
-  if (im==NULL){return NULL;} //a alocação de memória falhou
+  if (im==NULL){ //a alocação de memória falhou
+    return NULL;
+    errsave = errno;
+    errno = errsave;
+    }
   im->pixel=malloc(width*height*sizeof(im->pixel));
-  if (im->pixel==NULL){return NULL;}//a alocação de memória para o array falhou
+  if (im->pixel==NULL){ //a alocação de memória falhou
+    return NULL;
+    errsave = errno;
+    errno = errsave;
+  }
   im->width=width;
   im->height=height;
   im->maxval=maxval;
