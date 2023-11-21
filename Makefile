@@ -46,7 +46,7 @@ test2: $(PROGS) setup
 	cmp thr.pgm test/thr.pgm
 
 test3: $(PROGS) setup
-	./imageTool test/original.pgm bri 2.0 save bri.pgm
+	./imageTool test/original.pgm bri .33 save bri.pgm
 	cmp bri.pgm test/bri.pgm
 
 test4: $(PROGS) setup
