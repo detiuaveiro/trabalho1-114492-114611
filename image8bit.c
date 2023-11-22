@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "instrumentation.h"
 
 // The data structure
@@ -556,7 +557,9 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   if(alpha<0) {alpha = 0;}
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
-      img1->pixel[xindex+x+(yindex+y)*img1->width] = img1->pixel[xindex+x+(yindex+y)*img1->width]*(1-alpha) + img2->pixel[(yindex*img2->width)+xindex]*alpha;
+      int index = xindex+x+((yindex+y)*img1->width);
+      int indexb = (yindex*img2->width)+xindex;
+      img1->pixel[index] = round(img1->pixel[index]*(1-alpha) + img2->pixel[indexb]*alpha);
     }
   }
 }
