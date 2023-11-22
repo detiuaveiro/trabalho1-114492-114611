@@ -626,8 +626,8 @@ void ImageBlur(Image img, int dx, int dy) { ///
         ddx = xb;
       if (xb+dy>img->width)
         ddx = img->width-xb;
-      for (long yindex=yb-ddy;yindex<yb+ddx;yindex++){
-        for (long xindex=xb-ddx;xindex<xb+ddy;xindex++){
+      for (long yindex=yb-ddy;yindex<yb+ddy;yindex++){
+        for (long xindex=xb-ddx;xindex<xb+ddx;xindex++){
           sum += img->pixel[(yindex*img->width)+xindex];
           count++;
         }
