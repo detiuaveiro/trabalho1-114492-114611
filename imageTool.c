@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <error.h>
 #include <assert.h>
+#include <math.h>
 
 #include "image8bit.h"
 #include "instrumentation.h"

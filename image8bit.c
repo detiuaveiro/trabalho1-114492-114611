@@ -640,4 +640,3 @@ void ImageBlur(Image img, int dx, int dy) { ///
     img->pixel[index] = img->pixel[index]*(1/(img->pixel[index]/(mean[index]-img->pixel[index])));
   }
 }
-
