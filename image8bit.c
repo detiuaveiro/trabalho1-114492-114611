@@ -10,8 +10,8 @@
 /// 2013, 2023
 
 // Student authors (fill in below):
-// NMec:  Name:
-// 
+// NMec: 114492 Name: Francisco João Lopes Carvalho
+// NMec: 114611 Name: Daniel Gonçalves Martins
 // 
 // 
 // Date:
@@ -170,8 +170,16 @@ void ImageInit(void) { ///
 Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (width >= 0);
   assert (height >= 0);
-  assert (0 < maxval && maxval <= PixMax);
+  assert (0 < maxval && maxval <= PixMax);  
   // Insert your code here!
+  struct image* im=malloc(sizeof(*im));
+  if (im==NULL){return NULL;} //a alocação de memória falhou
+  im->pixel=malloc(width*height*sizeof(im->pixel));
+  if (im->pixel==NULL){return NULL;}//a alocação de memória para o array falhou
+  im->width=width;
+  im->height=height;
+  im->maxval=maxval;
+  return im;
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -182,6 +190,10 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
+  free((*imgp)->pixel);
+  (*imgp)->pixel=NULL;
+  free(*imgp);
+  imgp=NULL;
 }
 
 
@@ -294,6 +306,16 @@ int ImageMaxval(Image img) { ///
 void ImageStats(Image img, uint8* min, uint8* max) { ///
   assert (img != NULL);
   // Insert your code here!
+  *max=img->pixel[0];
+  *min=img->pixel[0];
+  for (long index=0;index<img->height*img->width;index++){
+    if(img->pixel[index]>*max){
+      *max=img->pixel[index];
+    }
+    else if(img->pixel[index]<*min){
+      *min=img->pixel[index];
+    }
+  }
 }
 
 /// Check if pixel position (x,y) is inside img.
@@ -306,6 +328,7 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
+  return (ImageValidPos(img, x, y) != 0) && (w != 0 && x+w <= img->width) && (h != 0 && y+h <= img->height);
 }
 
 /// Pixel get & set operations
@@ -321,6 +344,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 static inline int G(Image img, int x, int y) {
   int index;
   // Insert your code here!
+  index=y*img->width+x;
   assert (0 <= index && index < img->width*img->height);
   return index;
 }
@@ -356,6 +380,9 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  for (long index=0;index<img->height*img->width;index++){
+     img->pixel[index]=img->maxval - img->pixel[index];
+  }
 }
 
 /// Apply threshold to image.
@@ -364,6 +391,14 @@ void ImageNegative(Image img) { ///
 void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
+  for (long index=0;index<img->height*img->width;index++){
+    if(img->pixel[index]<thr){
+      img->pixel[index]=0;
+    }
+    else{
+      img->pixel[index]=img->maxval;
+    }
+  }
 }
 
 /// Brighten image by a factor.
@@ -372,10 +407,16 @@ void ImageThreshold(Image img, uint8 thr) { ///
 /// darken the image if factor<1.0.
 void ImageBrighten(Image img, double factor) { ///
   assert (img != NULL);
+  assert (factor >= 0.0);
   // ? assert (factor >= 0.0);
   // Insert your code here!
+  for (long index=0;index<img->height*img->width;index++){
+    int color=img->pixel[index]*factor;  
+    printf("%d",color);
+    if(color>img->maxval){color=img->maxval;}
+    img->pixel[index]=color;
+  }
 }
-
 
 /// Geometric transformations
 
@@ -392,7 +433,7 @@ void ImageBrighten(Image img, double factor) { ///
 
 /// Rotate an image.
 /// Returns a rotated version of the image.
-/// The rotation is 90 degrees anti-clockwise.
+/// The rotation is 90 degrees clockwise.
 /// Ensures: The original img is not modified.
 /// 
 /// On success, a new image is returned.
@@ -401,7 +442,15 @@ void ImageBrighten(Image img, double factor) { ///
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  Image new_img = ImageCreate(img->height, img->width, img->maxval);
+  for (int x = 0; x < img->width; x++) {
+    for (int y = 0; y < img->height; y++) {
+      new_img->pixel[y+(img->height-x-1)*new_img->width] = img->pixel[x+y*img->width];
+    }
+  }
+  return new_img;
 }
+
 
 /// Mirror an image = flip left-right.
 /// Returns a mirrored version of the image.
@@ -413,6 +462,20 @@ Image ImageRotate(Image img) { ///
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  Image imgm = NULL;
+  long indexm;
+  imgm = ImageCreate(img->width, img->height, img->maxval);
+  int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
+  for (long index=0;index<img->height*img->width;index++){
+    indexm = index-((index+1)%img->width)+(img->width-(((index+1)%img->width)-1));
+    imgm->pixel[index] = img->pixel[indexm];
+  }
+  // Cleanup
+  if (!success) {
+    errsave = errno;
+    errno = errsave;
+  }
+  return imgm;
 }
 
 /// Crop a rectangular subimage from img.
@@ -431,6 +494,20 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
+  Image imgc = NULL;
+  imgc = ImageCreate(w, h, img->maxval);
+  int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
+  for (long yindex=0;yindex<imgc->height;yindex++){
+    for (long xindex=0;xindex<imgc->width;xindex++){
+      imgc->pixel[(yindex*imgc->width)+xindex] = img->pixel[xindex+x+(yindex+y)*img->width];
+    }
+  }
+  // Cleanup
+  if (!success) {
+    errsave = errno;
+    errno = errsave;
+  }
+  return imgc;
 }
 
 
@@ -445,6 +522,11 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  for (long yindex=0;yindex<img2->height;yindex++){
+    for (long xindex=0;xindex<img2->width;xindex++){
+      img1->pixel[xindex+x+(yindex+y)*img1->width] = img2->pixel[(yindex*img2->width)+xindex];
+    }
+  }
 }
 
 /// Blend an image into a larger image.
@@ -458,6 +540,13 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  if(alpha>1) {alpha = 1;}
+  if(alpha<0) {alpha = 0;}
+  for (long yindex=0;yindex<img2->height;yindex++){
+    for (long xindex=0;xindex<img2->width;xindex++){
+      img1->pixel[xindex+x+(yindex+y)*img1->width] = img1->pixel[xindex+x+(yindex+y)*img1->width]*(1-alpha) + img2->pixel[(yindex*img2->width)+xindex]*alpha;
+    }
+  }
 }
 
 /// Compare an image to a subimage of a larger image.
@@ -468,6 +557,14 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
+  for (long yindex=0;yindex<img2->height;yindex++){
+    for (long xindex=0;xindex<img2->width;xindex++){
+      if (img1->pixel[xindex+x+(yindex+y)*img1->width]!=img2->pixel[xindex+yindex*img2->width]){
+        return 0;
+      }
+    }
+  }
+  return 1;
 }
 
 /// Locate a subimage inside another image.
@@ -478,6 +575,18 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+  for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){
+    for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
+      if(img1->pixel[xindex+yindex*img1->width]==img2->pixel[0]){
+          if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){
+            (*px)=xindex;
+            (*py)=yindex;
+            return 1;
+        }
+      }
+    }
+  }
+  return 0;
 }
 
 
@@ -489,6 +598,28 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
+  int ycount = 0;
+  for (long yindex=0;yindex<img->height;yindex++){
+    int xcount = 0;
+    for (long xindex=0;xindex<img->width;xindex++){
+      int sum = 0, count = 0;
+      //if (ycount-dy<img->height)
+      //if (ycount+dy>img->height)
+      //if (xcount-dy<img->width)
+      //if (xcount+dy>img->width)
+      for (long ybindex=yindex-dy;ybindex<yindex+dx;ybindex++){
+        for (long xbindex=xindex-dx;xbindex<xindex+dy;xbindex++){
+          sum += img->pixel[(ybindex*img->width)+xbindex];
+          count++;
+        }
+      }
+      int mean = sum/count;
+      img->pixel[(yindex*img->width)+xindex] = 
+      img->pixel[(yindex*img->width)+xindex]*(1/(img->pixel[(yindex*img->width)+xindex]/(mean-img->pixel[(yindex*img->width)+xindex])));
+      xcount++;
+    }
+    ycount++;
+  }
 }
 
 /// image8bit - A simple image processing module.
