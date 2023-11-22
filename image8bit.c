@@ -323,6 +323,9 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
     else if(img->pixel[index]<*min){
       *min=img->pixel[index];
     }
+    if(img->maxval==*max && *min==0){
+      break;
+    }
   }
 }
 
