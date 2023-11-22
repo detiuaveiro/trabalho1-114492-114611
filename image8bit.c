@@ -473,13 +473,15 @@ Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   Image imgm = NULL;
-  long indexm;
   imgm = ImageCreate(img->width, img->height, img->maxval);
   int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
-  for (long index=0;index<img->height*img->width;index++){
-    indexm = index-((index+1)%img->width)+(img->width-(((index+1)%img->width)-1));
-    imgm->pixel[index] = img->pixel[indexm];
-  }
+  for (int yindex = 0; yindex < img->height; yindex++) {
+        for (int xindex = 0; xindex < img->width; xindex++) {
+            int index = yindex * img->width + xindex;
+            int indexm = yindex * img->width + (img->width - 1 - xindex);
+            imgm->pixel[indexm] = img->pixel[index];
+        }
+    }
   // Cleanup
   if (!success) {
     errsave = errno;
