@@ -418,11 +418,11 @@ void ImageThreshold(Image img, uint8 thr) { ///
 /// darken the image if factor<1.0.
 void ImageBrighten(Image img, double factor) { ///
   assert (img != NULL);
-  assert (factor >= 0.0);
+  assert (factor >= 0);
   // ? assert (factor >= 0.0);
   // Insert your code here!
   for (long index=0;index<img->height*img->width;index++){
-    int color=img->pixel[index]*factor+0.5;  
+    int color=img->pixel[index]*factor;  
     if(color>img->maxval){color=img->maxval;}
     img->pixel[index]=color;
   }
@@ -556,9 +556,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   if(alpha<0) {alpha = 0;}
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
-      int index = xindex+x+((yindex+y)*img1->width);
-      int indexb = (yindex*img2->width)+xindex;
-      img1->pixel[index] = (img1->pixel[index]*(1-alpha) + img2->pixel[indexb]*alpha)+0.5;
+      img1->pixel[xindex+x+(yindex+y)*img1->width] = img1->pixel[xindex+x+(yindex+y)*img1->width]*(1-alpha) + img2->pixel[(yindex*img2->width)+xindex]*alpha;
     }
   }
 }
@@ -613,8 +611,8 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   int ddx, ddy, mean[img->height*img->width];
-  for (long yb=0; yb<img->height; yb++){
-    for (long xb=0; xb<img->width; xb++){
+  for (long yb=0;yb<img->height;yb++){
+    for (long xb=0;xb<img->width;xb++){
       int sum = 0, count = 0;
       ddy=dy;
       ddx=dx;
@@ -626,8 +624,8 @@ void ImageBlur(Image img, int dx, int dy) { ///
         ddx = xb;
       if (xb+dy>img->width)
         ddx = img->width-xb;
-      for (long yindex=yb-ddy;yindex<yb+ddx;yindex++){
-        for (long xindex=xb-ddx;xindex<xb+ddy;xindex++){
+      for (long yindex=yb-ddy;yindex<yb+ddy;yindex++){
+        for (long xindex=xb-ddx;xindex<xb+ddx;xindex++){
           sum += img->pixel[(yindex*img->width)+xindex];
           count++;
         }
@@ -635,7 +633,8 @@ void ImageBlur(Image img, int dx, int dy) { ///
       mean[(yb*img->width)+xb] = sum/count;
     }
   }
-  for (long index=0; index<img->height*img->width; index++){
+  for (long index=0;index<img->height*img->width;index++){
     img->pixel[index] = img->pixel[index]*(1/(img->pixel[index]/(mean[index]-img->pixel[index])));
   }
 }
+
