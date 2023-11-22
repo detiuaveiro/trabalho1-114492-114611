@@ -420,7 +420,6 @@ void ImageBrighten(Image img, double factor) { ///
   // Insert your code here!
   for (long index=0;index<img->height*img->width;index++){
     int color=img->pixel[index]*factor;  
-    printf("%d",color);
     if(color>img->maxval){color=img->maxval;}
     img->pixel[index]=color;
   }
