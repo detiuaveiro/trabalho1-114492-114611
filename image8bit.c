@@ -422,7 +422,7 @@ void ImageBrighten(Image img, double factor) { ///
   // ? assert (factor >= 0.0);
   // Insert your code here!
   for (long index=0;index<img->height*img->width;index++){
-    int color=img->pixel[index]*factor;  
+    int color=img->pixel[index]*factor+0.5;  
     if(color>img->maxval){color=img->maxval;}
     img->pixel[index]=color;
   }
