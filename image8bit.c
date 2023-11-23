@@ -391,9 +391,12 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  int counter=0;
   for (long index=0;index<img->height*img->width;index++){
-     img->pixel[index]=img->maxval - img->pixel[index];
+    img->pixel[index]=img->maxval - img->pixel[index];
+    counter++;
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
 }
 
 /// Apply threshold to image.
@@ -402,6 +405,7 @@ void ImageNegative(Image img) { ///
 void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
+  int counter=0;
   for (long index=0;index<img->height*img->width;index++){
     if(img->pixel[index]<thr){
       img->pixel[index]=0;
@@ -409,7 +413,9 @@ void ImageThreshold(Image img, uint8 thr) { ///
     else{
       img->pixel[index]=img->maxval;
     }
+    counter++;
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
 }
 
 /// Brighten image by a factor.
@@ -421,11 +427,16 @@ void ImageBrighten(Image img, double factor) { ///
   assert (factor >= 0.0);
   // ? assert (factor >= 0.0);
   // Insert your code here!
+  int counter=0;
   for (long index=0;index<img->height*img->width;index++){
     int color=img->pixel[index]*factor+0.5;  
-    if(color>img->maxval){color=img->maxval;}
+    if(color>img->maxval){
+      color=img->maxval;
+    }
     img->pixel[index]=color;
+    counter++;
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
 }
 
 /// Geometric transformations
@@ -452,12 +463,15 @@ void ImageBrighten(Image img, double factor) { ///
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+  int counter=0;
   Image new_img = ImageCreate(img->height, img->width, img->maxval);
   for (int x = 0; x < img->width; x++) {
     for (int y = 0; y < img->height; y++) {
       new_img->pixel[y+(img->height-x-1)*new_img->width] = img->pixel[x+y*img->width];
+      counter++;
     }
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
   return new_img;
 }
 
@@ -471,6 +485,7 @@ Image ImageRotate(Image img) { ///
 /// On failure, returns NULL and errno/errCause are set accordingly.
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
+  int counter=0;
   // Insert your code here!
   Image imgm = ImageCreate(img->width, img->height, img->maxval);
   int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
@@ -479,9 +494,11 @@ Image ImageMirror(Image img) { ///
             int index = yindex * img->width + xindex;
             int indexm = yindex * img->width + (img->width - 1 - xindex);
             imgm->pixel[indexm] = img->pixel[index];
+            counter++;
         }
     }
   // Cleanup
+  printf("\nNumero de Iteracoes: %d\n",counter);
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -505,14 +522,17 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
+  int counter=0;
   Image imgc = ImageCreate(w, h, img->maxval);
   int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
   for (long yindex=0;yindex<imgc->height;yindex++){
     for (long xindex=0;xindex<imgc->width;xindex++){
       imgc->pixel[(yindex*imgc->width)+xindex] = img->pixel[xindex+x+(yindex+y)*img->width];
+      counter++;
     }
   }
   // Cleanup
+  printf("\nNumero de Iteracoes: %d\n",counter);
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -532,11 +552,14 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  int counter=0;
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
       img1->pixel[xindex+x+(yindex+y)*img1->width] = img2->pixel[(yindex*img2->width)+xindex];
+      counter++;
     }
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
 }
 
 /// Blend an image into a larger image.
@@ -550,6 +573,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+  int counter=0;
   if(alpha>1) {alpha = 1;}
   if(alpha<0) {alpha = 0;}
   for (long yindex=0;yindex<img2->height;yindex++){
@@ -557,8 +581,11 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
       int index = xindex+x+((yindex+y)*img1->width);
       int indexb = (yindex*img2->width)+xindex;
       img1->pixel[index] = (img1->pixel[index]*(1-alpha) + img2->pixel[indexb]*alpha)+0.5;
+      counter++;
     }
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
+
 }
 
 /// Compare an image to a subimage of a larger image.
@@ -569,13 +596,16 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
+  int counter=0;
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
       if (img1->pixel[xindex+x+(yindex+y)*img1->width]!=img2->pixel[xindex+yindex*img2->width]){
         return 0;
       }
+      counter++;
     }
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
   return 1;
 }
 
@@ -587,17 +617,20 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+  int counter=0;
   for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){
     for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
       if(img1->pixel[xindex+yindex*img1->width]==img2->pixel[0]){
-          if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){
-            (*px)=xindex;
-            (*py)=yindex;
-            return 1;
+        if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){
+          (*px)=xindex;
+          (*py)=yindex;
+          return 1;
         }
       }
+      counter++;
     }
   }
+  printf("\nNumero de Iteracoes: %d\n",counter);
   return 0;
 }
 
