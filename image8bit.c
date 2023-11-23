@@ -614,7 +614,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
   uint8_t pix_filter;
   for (int yb=0; yb<img->height; yb++){
     for (int xb=0; xb<img->width; xb++){
-      int sum = 0, count = 0;
+      double sum = 0, count = 0;
       for (int yindex = yb-dy; yindex <= yb+dy; yindex++) {
         for (int xindex = xb-dx; xindex <= xb+dx; xindex++) {
           if (xindex >= 0 && xindex < img->width && yindex >= 0 && yindex < img->height) {
@@ -624,14 +624,10 @@ void ImageBlur(Image img, int dx, int dy) { ///
         }
       }
       if (count > 0) {
-        pix_filter = (sum / count);
+        pix_filter = (sum / count)+0.5;
         ImageSetPixel(mean, xb, yb, pix_filter);
       }
     }
   }
-  for (long y=0; y<img->width; y++){
-    for (long x=0; x<img->height; x++){
-      img->pixel[(y*img->width)+x] = mean->pixel[(y*img->width)+x];
-    }
-  }
+  ImagePaste(img,0,0,mean);
 }
