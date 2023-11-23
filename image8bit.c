@@ -611,7 +611,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   Image mean = ImageCreate(img->width,img->height,img->maxval);
-  uint8_t pix_filter;
+  uint8_t color;
   for (int yb=0; yb<img->height; yb++){
     for (int xb=0; xb<img->width; xb++){
       double sum = 0, count = 0;
@@ -624,8 +624,8 @@ void ImageBlur(Image img, int dx, int dy) { ///
         }
       }
       if (count > 0) {
-        pix_filter = (sum / count)+0.5;
-        ImageSetPixel(mean, xb, yb, pix_filter);
+        color = (sum / count)+0.5;
+        ImageSetPixel(mean, xb, yb, color);
       }
     }
   }
