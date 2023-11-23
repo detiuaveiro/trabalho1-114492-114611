@@ -610,17 +610,26 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
+  int ddx, ddy;
   Image mean = ImageCreate(img->width,img->height,img->maxval);
   uint8_t color;
-  for (int yb=0; yb<img->height; yb++){
-    for (int xb=0; xb<img->width; xb++){
+  for (long yb=0; yb<img->height; yb++){
+    for (long xb=0; xb<img->width; xb++){
       double sum = 0, count = 0;
-      for (int yindex = yb-dy; yindex <= yb+dy; yindex++) {
-        for (int xindex = xb-dx; xindex <= xb+dx; xindex++) {
-          if (xindex >= 0 && xindex < img->width && yindex >= 0 && yindex < img->height) {
-            sum += ImageGetPixel(img, xindex, yindex);
-            count++;
-          }
+      ddy=dy;
+      ddx=dx;
+      if (yb-dy<0)
+        ddy = yb;
+      if (yb+dy>=img->height)
+        ddy = img->height-yb-1;
+      if (xb-dx<0)
+        ddx = xb;
+      if (xb+dx>=img->width)
+        ddx = img->width-xb-1;
+      for (long yindex=yb-ddy;yindex<=yb+ddy;yindex++){
+        for (long xindex=xb-ddx;xindex<=xb+ddx;xindex++){
+          sum += ImageGetPixel(img, xindex, yindex);
+          count++;
         }
       }
       if (count > 0) {
