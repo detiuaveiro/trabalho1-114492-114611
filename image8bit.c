@@ -472,8 +472,7 @@ Image ImageRotate(Image img) { ///
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
-  Image imgm = NULL;
-  imgm = ImageCreate(img->width, img->height, img->maxval);
+  Image imgm = ImageCreate(img->width, img->height, img->maxval);
   int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
   for (int yindex = 0; yindex < img->height; yindex++) {
         for (int xindex = 0; xindex < img->width; xindex++) {
@@ -506,8 +505,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
-  Image imgc = NULL;
-  imgc = ImageCreate(w, h, img->maxval);
+  Image imgc = ImageCreate(w, h, img->maxval);
   int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
   for (long yindex=0;yindex<imgc->height;yindex++){
     for (long xindex=0;xindex<imgc->width;xindex++){
@@ -612,20 +610,20 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
-  int ddx, ddy, mean[img->height*img->width];
-  for (long yb=0; yb<img->height; yb++){
-    for (long xb=0; xb<img->width; xb++){
+  int ddx = 0, ddy = 0, mean[img->height*img->width];
+  for (int yb=0; yb<img->height; yb++){
+    for (int xb=0; xb<img->width; xb++){
       int sum = 0, count = 0;
       ddy=dy;
       ddx=dx;
       if (yb-dy<0)
         ddy = yb;
-      if (yb+dy>img->height)
-        ddy = img->height-yb;
+      if (yb+dy>=img->height)
+        ddy = img->height-yb-1;
       if (xb-dy<0)
         ddx = xb;
-      if (xb+dy>img->width)
-        ddx = img->width-xb;
+      if (xb+dy>=img->width)
+        ddx = img->width-xb-1;
       for (long yindex=yb-ddy;yindex<yb+ddy;yindex++){
         for (long xindex=xb-ddx;xindex<xb+ddx;xindex++){
           sum += img->pixel[(yindex*img->width)+xindex];
@@ -636,6 +634,6 @@ void ImageBlur(Image img, int dx, int dy) { ///
     }
   }
   for (long index=0; index<img->height*img->width; index++){
-    img->pixel[index] = img->pixel[index]*(1/(img->pixel[index]/(mean[index]-img->pixel[index])));
+    img->pixel[index] = mean[index];
   }
 }
