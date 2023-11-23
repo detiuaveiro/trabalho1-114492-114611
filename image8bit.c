@@ -610,30 +610,28 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
-  int ddx = 0, ddy = 0, mean[img->height*img->width];
+  Image mean = ImageCreate(img->width,img->height,img->maxval);
+  uint8_t pix_filter;
   for (int yb=0; yb<img->height; yb++){
     for (int xb=0; xb<img->width; xb++){
       int sum = 0, count = 0;
-      ddy=dy;
-      ddx=dx;
-      if (yb-dy<0)
-        ddy = yb;
-      if (yb+dy>=img->height)
-        ddy = img->height-yb-1;
-      if (xb-dy<0)
-        ddx = xb;
-      if (xb+dy>=img->width)
-        ddx = img->width-xb-1;
-      for (long yindex=yb-ddy;yindex<yb+ddy;yindex++){
-        for (long xindex=xb-ddx;xindex<xb+ddx;xindex++){
-          sum += img->pixel[(yindex*img->width)+xindex];
-          count++;
+      for (int yindex = yb-dy; yindex <= yb+dy; yindex++) {
+        for (int xindex = xb-dx; xindex <= xb+dx; xindex++) {
+          if (xindex >= 0 && xindex < img->width && yindex >= 0 && yindex < img->height) {
+            sum += ImageGetPixel(img, xindex, yindex);
+            count++;
+          }
         }
       }
-      mean[(yb*img->width)+xb] = sum/count;
+      if (count > 0) {
+        pix_filter = (sum / count);
+        ImageSetPixel(mean, xb, yb, pix_filter);
+      }
     }
   }
-  for (long index=0; index<img->height*img->width; index++){
-    img->pixel[index] = mean[index];
+  for (long y=0; y<img->width; y++){
+    for (long x=0; x<img->height; x++){
+      img->pixel[(y*img->width)+x] = mean->pixel[(y*img->width)+x];
+    }
   }
 }
