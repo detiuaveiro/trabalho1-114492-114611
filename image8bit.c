@@ -172,13 +172,13 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);  
   // Insert your code here!
-  struct image* im=malloc(sizeof(*im));
+  struct image* im=malloc(sizeof(*im)); //allocates memory for the image
   if (im==NULL){ //a alocação de memória falhou
     return NULL;
     errsave = errno;
     errno = errsave;
     }
-  im->pixel=malloc(width*height*sizeof(im->pixel));
+  im->pixel=malloc(width*height*sizeof(im->pixel)); //allocates memory for the "array" of pixels
   if (im->pixel==NULL){ //a alocação de memória falhou
     return NULL;
     errsave = errno;
@@ -198,9 +198,9 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
-  free((*imgp)->pixel);
+  free((*imgp)->pixel); //releases the memory allocated for the pixel
   (*imgp)->pixel=NULL;
-  free(*imgp);
+  free(*imgp); // releases the memory allocated for the Image
   imgp=NULL;
 }
 
@@ -314,18 +314,18 @@ int ImageMaxval(Image img) { ///
 void ImageStats(Image img, uint8* min, uint8* max) { ///
   assert (img != NULL);
   // Insert your code here!
-  *max=img->pixel[0];
+  *max=img->pixel[0]; //sets the max and min to the first pixel to initialize the variables
   *min=img->pixel[0];
-  for (long index=0;index<img->height*img->width;index++){
+  for (long index=0;index<img->height*img->width;index++){ //loops through the pixels of image
     if(img->pixel[index]>*max){
       *max=img->pixel[index];
     }
     else if(img->pixel[index]<*min){
       *min=img->pixel[index];
     }
-    if(img->maxval==*max && *min==0){
-      break;
-    }
+    if(img->maxval==*max && *min==0){ //checks if the current values for max and min are the 
+      break;                          //highest and lowest values the pixel can get, respectively
+    }                                 //this reduces the number of iterations
   }
 }
 
@@ -396,7 +396,7 @@ void ImageNegative(Image img) { ///
     img->pixel[index]=img->maxval - img->pixel[index];
     counter++;
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (negative): %d\n",counter);
 }
 
 /// Apply threshold to image.
@@ -415,7 +415,7 @@ void ImageThreshold(Image img, uint8 thr) { ///
     }
     counter++;
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (threshold): %d\n",counter);
 }
 
 /// Brighten image by a factor.
@@ -436,7 +436,7 @@ void ImageBrighten(Image img, double factor) { ///
     img->pixel[index]=color;
     counter++;
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions(brighten): %d\n",counter);
 }
 
 /// Geometric transformations
@@ -473,7 +473,7 @@ Image ImageRotate(Image img) { ///
       counter++;
     }
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (rotate): %d\n",counter);
   return new_img;
 }
 
@@ -500,7 +500,7 @@ Image ImageMirror(Image img) { ///
         }
     }
   // Cleanup
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (mirror): %d\n",counter);
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -536,7 +536,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
     }
   }
   // Cleanup
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (crop): %d\n",counter);
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -565,7 +565,7 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
       counter++;
     }
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (paste): %d\n",counter);
 }
 
 /// Blend an image into a larger image.
@@ -590,7 +590,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
       counter++;
     }
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (blend): %d\n",counter);
 
 }
 
@@ -611,7 +611,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
       }
     }
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (match): %d\n",counter);
   return 1;
 }
 
@@ -636,7 +636,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
       }
     }
   }
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (locate): %d\n",counter);
   return 0;
 }
 
@@ -680,5 +680,5 @@ void ImageBlur(Image img, int dx, int dy) { ///
   }
   ImagePaste(img,0,0,mean); //Pastes the image 'mean' into the image given
   ImageDestroy(&mean); //Destroys the image created
-  printf("\nNumero de Iteracoes: %d\n",counter);
+  printf("\nNumber of iteracions (blur): %d\n",counter); //prints the number of iterations
 }
