@@ -355,7 +355,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 static inline int G(Image img, int x, int y) {
   int index;
   // Insert your code here!
-  index=y*img->width+x;
+  index=y*img->width+x; //this gives the index of the pixel in the array based on the coordinates, x and y, of the pixel in the image
   assert (0 <= index && index < img->width*img->height);
   return index;
 }
@@ -392,8 +392,8 @@ void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   int counter=0;
-  for (long index=0;index<img->height*img->width;index++){
-    img->pixel[index]=img->maxval - img->pixel[index];
+  for (long index=0;index<img->height*img->width;index++){ //loops through all the pixels
+    img->pixel[index]=img->maxval - img->pixel[index]; //sets the value of the pixel to it's opposite
     counter++;
   }
   printf("\nNumber of iteracions (negative): %d\n",counter);
