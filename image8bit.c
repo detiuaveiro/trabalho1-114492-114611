@@ -464,10 +464,12 @@ Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   int counter=0;
-  Image new_img = ImageCreate(img->height, img->width, img->maxval);
-  for (int x = 0; x < img->width; x++) {
+  Image new_img = ImageCreate(img->height, img->width, img->maxval); //Creates a new image
+  for (int x = 0; x < img->width; x++) { //Loops to run each pixel of the image
     for (int y = 0; y < img->height; y++) {
-      new_img->pixel[y+(img->height-x-1)*new_img->width] = img->pixel[x+y*img->width];
+      int new_index = y+(img->height-x-1)*new_img->width; //Pixel index for new_img
+      int index = x+y*img->width; //Pixel index for img
+      new_img->pixel[new_index] = img->pixel[index]; //Copies pixel from original image to the rotated image
       counter++;
     }
   }
@@ -487,13 +489,13 @@ Image ImageMirror(Image img) { ///
   assert (img != NULL);
   int counter=0;
   // Insert your code here!
-  Image imgm = ImageCreate(img->width, img->height, img->maxval);
+  Image imgm = ImageCreate(img->width, img->height, img->maxval); //Creates a new image
   int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
-  for (int yindex = 0; yindex < img->height; yindex++) {
+  for (int yindex = 0; yindex < img->height; yindex++) { //Loops to run each pixel of the image
         for (int xindex = 0; xindex < img->width; xindex++) {
-            int index = yindex * img->width + xindex;
-            int indexm = yindex * img->width + (img->width - 1 - xindex);
-            imgm->pixel[indexm] = img->pixel[index];
+            int index = yindex * img->width + xindex; //Pixel index for img
+            int indexm = yindex * img->width + (img->width - 1 - xindex); //Pixel index for imgm
+            imgm->pixel[indexm] = img->pixel[index]; //Copies pixel from original image to the mirrored image
             counter++;
         }
     }
@@ -523,11 +525,13 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
   int counter=0;
-  Image imgc = ImageCreate(w, h, img->maxval);
+  Image imgc = ImageCreate(w, h, img->maxval); //Creates a new image
   int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
-  for (long yindex=0;yindex<imgc->height;yindex++){
+  for (long yindex=0;yindex<imgc->height;yindex++){ //Loop to run each pixel of the image created
     for (long xindex=0;xindex<imgc->width;xindex++){
-      imgc->pixel[(yindex*imgc->width)+xindex] = img->pixel[xindex+x+(yindex+y)*img->width];
+      int indexc = yindex*imgc->width+xindex; //Pixel index for imgc
+      int index = xindex+x+(yindex+y)*img->width; //Pixel index for img
+      imgc->pixel[indexc] = img->pixel[index]; //Copies the pixel from the original image to the cropped image
       counter++;
     }
   }
@@ -553,9 +557,11 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
   int counter=0;
-  for (long yindex=0;yindex<img2->height;yindex++){
+  for (long yindex=0;yindex<img2->height;yindex++){ //Loops to run each pixel of the image
     for (long xindex=0;xindex<img2->width;xindex++){
-      img1->pixel[xindex+x+(yindex+y)*img1->width] = img2->pixel[(yindex*img2->width)+xindex];
+      int index1 = xindex+x+(yindex+y)*img1->width; //Pixel index for img1
+      int index2 = yindex*img2->width+xindex; //Pixel index for img2
+      img1->pixel[index1] = img2->pixel[index2];  //Pastes the pixel of img2 into img1
       counter++;
     }
   }
@@ -574,13 +580,13 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
   int counter=0;
-  if(alpha>1) {alpha = 1;}
+  if(alpha>1) {alpha = 1;} //Checks if alpha value is inside of the interval [0.0, 1.0]
   if(alpha<0) {alpha = 0;}
-  for (long yindex=0;yindex<img2->height;yindex++){
+  for (long yindex=0;yindex<img2->height;yindex++){ //Loops to run each pixel of the image
     for (long xindex=0;xindex<img2->width;xindex++){
-      int index = xindex+x+((yindex+y)*img1->width);
-      int indexb = (yindex*img2->width)+xindex;
-      img1->pixel[index] = (img1->pixel[index]*(1-alpha) + img2->pixel[indexb]*alpha)+0.5;
+      int index1 = xindex+x+((yindex+y)*img1->width); //Pixel index for img1
+      int index2 = (yindex*img2->width)+xindex; //Pixel index for img2
+      img1->pixel[index1] = (img1->pixel[index1]*(1-alpha) + img2->pixel[index2]*alpha)+0.5; //Calculates the value of the blend and modifies the pixel
       counter++;
     }
   }
@@ -644,22 +650,22 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   int ddx, ddy, counter = 0;
-  Image mean = ImageCreate(img->width,img->height,img->maxval);
+  Image mean = ImageCreate(img->width,img->height,img->maxval); //Creates an image to store the values
   uint8_t color;
-  for (long yb=0; yb<img->height; yb++){
+  for (long yb=0; yb<img->height; yb++){ //Loops to run each pixel of the image
     for (long xb=0; xb<img->width; xb++){
       double sum = 0, count = 0;
-      ddy=dy;
+      ddy=dy; //Creates a copies of 'dx' and 'dy' to be able to modify them
       ddx=dx;
-      if (yb-dy<0)
-        ddy = yb;
+      if (yb-dy<0) //Conditions to check if rectangle is inside the image
+        ddy = yb; //Changes 'ddy' or 'ddx' to the max value where the rectangle is inside the image 
       if (yb+dy>=img->height)
         ddy = img->height-yb-1;
       if (xb-dx<0)
         ddx = xb;
       if (xb+dx>=img->width)
         ddx = img->width-xb-1;
-      for (long yindex=yb-ddy;yindex<=yb+ddy;yindex++){
+      for (long yindex=yb-ddy;yindex<=yb+ddy;yindex++){ //Loops to run each pixel in the rectangle
         for (long xindex=xb-ddx;xindex<=xb+ddx;xindex++){
           sum += ImageGetPixel(img, xindex, yindex);
           count++;
@@ -667,11 +673,12 @@ void ImageBlur(Image img, int dx, int dy) { ///
         }
       }
       if (count > 0) {
-        color = (sum / count)+0.5;
-        ImageSetPixel(mean, xb, yb, color);
+        color = (sum/count)+0.5; //Calculates the mean of the pixels
+        ImageSetPixel(mean, xb, yb, color); //Modifies the values of the pixel in the image created
       }
     }
   }
-  ImagePaste(img,0,0,mean);
+  ImagePaste(img,0,0,mean); //Pastes the image 'mean' into the image given
+  ImageDestroy(&mean); //Destroys the image created
   printf("\nNumero de Iteracoes: %d\n",counter);
 }
