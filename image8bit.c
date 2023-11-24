@@ -599,10 +599,10 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   int counter=0;
   for (long yindex=0;yindex<img2->height;yindex++){
     for (long xindex=0;xindex<img2->width;xindex++){
+      counter++;
       if (img1->pixel[xindex+x+(yindex+y)*img1->width]!=img2->pixel[xindex+yindex*img2->width]){
         return 0;
       }
-      counter++;
     }
   }
   printf("\nNumero de Iteracoes: %d\n",counter);
@@ -620,6 +620,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   int counter=0;
   for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){
     for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
+      counter++;
       if(img1->pixel[xindex+yindex*img1->width]==img2->pixel[0]){
         if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){
           (*px)=xindex;
@@ -627,7 +628,6 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
           return 1;
         }
       }
-      counter++;
     }
   }
   printf("\nNumero de Iteracoes: %d\n",counter);
@@ -643,7 +643,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
-  int ddx, ddy;
+  int ddx, ddy, counter = 0;
   Image mean = ImageCreate(img->width,img->height,img->maxval);
   uint8_t color;
   for (long yb=0; yb<img->height; yb++){
@@ -663,6 +663,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
         for (long xindex=xb-ddx;xindex<=xb+ddx;xindex++){
           sum += ImageGetPixel(img, xindex, yindex);
           count++;
+          counter++;
         }
       }
       if (count > 0) {
@@ -672,4 +673,5 @@ void ImageBlur(Image img, int dx, int dy) { ///
     }
   }
   ImagePaste(img,0,0,mean);
+  printf("\nNumero de Iteracoes: %d\n",counter);
 }
