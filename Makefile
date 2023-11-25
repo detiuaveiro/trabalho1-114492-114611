@@ -73,10 +73,10 @@ test9: $(PROGS) setup
 	./imageTool test/original.pgm blur 7,7 save blur.pgm
 	cmp blur.pgm test/blur.pgm
 test10: $(PROGS) setup
-	./imageTool test/thr.pgm test/match.pgm LocateSubImage 100,100
-	cmp blur.pgm test/blur.pgm
+	./imageTool test/thr.pgm test/match.pgm locate
 test11: $(PROGS) setup
-	./imageTool pgm/large/ireland_03_1600x1200.pgm pgm/large/einstein_940x940.pgm paste 100,150 save paste2.pgm
+	./imageTool .\tongue.pgm .\final.pgm locate
+
 .PHONY: tests
 tests: $(TESTS)
 
