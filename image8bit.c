@@ -624,6 +624,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img2 != NULL);
   // Insert your code here!
   int counter=0;
+  if(img1->height<img2->height&&img1->width<img2->width){return 0;} //verifies if img2 ain't bigger than img1
   for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){ // loops through all the pixels where the first pixel of img2 could be
     for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
       counter++;
