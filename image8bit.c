@@ -391,12 +391,12 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   for (long index=0;index<img->height*img->width;index++){ // loops through all the pixels
     img->pixel[index]=img->maxval - img->pixel[index]; // sets the value of the pixel to it's opposite
     counter++;
   }
-  printf("\nNumber of iterations (negative): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (negative): %lld\n",counter); // prints the number of iterations
 }
 
 /// Apply threshold to image.
@@ -405,7 +405,7 @@ void ImageNegative(Image img) { ///
 void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   for (long index=0;index<img->height*img->width;index++){ // loops through all the pixels
     if(img->pixel[index]<thr){ // checks if level>=thr
       img->pixel[index]=0; // sets the pixel to white
@@ -415,7 +415,7 @@ void ImageThreshold(Image img, uint8 thr) { ///
     }
     counter++;
   }
-  printf("\nNumber of iterations (threshold): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (threshold): %lld\n",counter); // prints the number of iterations
 }
 
 /// Brighten image by a factor.
@@ -427,7 +427,7 @@ void ImageBrighten(Image img, double factor) { ///
   assert (factor >= 0.0);
   // ? assert (factor >= 0.0);
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   for (long index=0;index<img->height*img->width;index++){ // loops through all the pixels
     int color=img->pixel[index]*factor+0.5;  
     if(color>img->maxval){ // checks if level is higher than maxval
@@ -436,7 +436,7 @@ void ImageBrighten(Image img, double factor) { ///
     img->pixel[index]=color; // sets the new level of the pixel
     counter++;
   }
-  printf("\nNumber of iterations (brighten): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (brighten): %lld\n",counter); // prints the number of iterations
 }
 
 /// Geometric transformations
@@ -463,7 +463,7 @@ void ImageBrighten(Image img, double factor) { ///
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   Image new_img = ImageCreate(img->height, img->width, img->maxval); // creates a new image
   for (int x = 0; x < img->width; x++) { // loops through all the pixels
     for (int y = 0; y < img->height; y++) {
@@ -473,7 +473,7 @@ Image ImageRotate(Image img) { ///
       counter++;
     }
   }
-  printf("\nNumber of iterations (rotate): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (rotate): %lld\n",counter); // prints the number of iterations
   return new_img;
 }
 
@@ -487,7 +487,7 @@ Image ImageRotate(Image img) { ///
 /// On failure, returns NULL and errno/errCause are set accordingly.
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
-  int counter=0;
+  long long counter=0;
   // Insert your code here!
   Image imgm = ImageCreate(img->width, img->height, img->maxval); // creates a new image
   int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
@@ -500,7 +500,7 @@ Image ImageMirror(Image img) { ///
         }
     }
   // Cleanup
-  printf("\nNumber of iterations (mirror): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (mirror): %lld\n",counter); // prints the number of iterations
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -524,7 +524,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   Image imgc = ImageCreate(w, h, img->maxval); // creates a new image
   int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
   for (long yindex=0;yindex<imgc->height;yindex++){ // loops through all the pixels
@@ -536,7 +536,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
     }
   }
   // Cleanup
-  printf("\nNumber of iterations (crop): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (crop): %lld\n",counter); // prints the number of iterations
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -556,7 +556,7 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   for (long yindex=0;yindex<img2->height;yindex++){ // loops through all the pixels
     for (long xindex=0;xindex<img2->width;xindex++){
       int index1 = xindex+x+(yindex+y)*img1->width; // pixel index for img1
@@ -565,7 +565,7 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
       counter++;
     }
   }
-  printf("\nNumber of iterations (paste): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (paste): %lld\n",counter); // prints the number of iterations
 }
 
 /// Blend an image into a larger image.
@@ -579,7 +579,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   if(alpha>1) {alpha = 1;} // checks if alpha value is inside of the interval [0.0, 1.0]
   if(alpha<0) {alpha = 0;}
   for (long yindex=0;yindex<img2->height;yindex++){ // loops through all the pixels
@@ -590,7 +590,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
       counter++;
     }
   }
-  printf("\nNumber of iterations (blend): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (blend): %lld\n",counter); // prints the number of iterations
 
 }
 
@@ -602,7 +602,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   for (long yindex=0;yindex<img2->height;yindex++){ // loops through all the pixels
     for (long xindex=0;xindex<img2->width;xindex++){
       counter++;
@@ -611,7 +611,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
       }
     }
   }
-  printf("\nNumber of iterations (match): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (match): %lld\n",counter); // prints the number of iterations
   return 1;
 }
 
@@ -623,7 +623,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
-  int counter=0;
+  long long counter=0;
   if(img1->height<img2->height&&img1->width<img2->width){return 0;} //verifies if img2 ain't bigger than img1
   for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){ // loops through all the pixels where the first pixel of img2 could be
     for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
@@ -638,7 +638,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
       counter++;
     }
   }
-  printf("\nNumber of iterations (locate): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (locate): %lld\n",counter); // prints the number of iterations
   return 0;
 }
 
@@ -651,7 +651,8 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
-  int ddx, ddy, counter = 0;
+  int ddx, ddy;
+  long long counter = 0;
   Image mean = ImageCreate(img->width,img->height,img->maxval); // creates an image to store the values
   uint8_t color;
   for (long yb=0; yb<img->height; yb++){ // loops through all the pixels
@@ -682,5 +683,5 @@ void ImageBlur(Image img, int dx, int dy) { ///
   }
   ImagePaste(img,0,0,mean); // pastes the image 'mean' into the image given
   ImageDestroy(&mean); // destroys the image created
-  printf("\nNumber of iterations (blur): %d\n",counter); // prints the number of iterations
+  printf("\nNumber of iterations (blur): %lld\n",counter); // prints the number of iterations
 }
