@@ -172,14 +172,14 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);  
   // Insert your code here!
-  struct image* im=malloc(sizeof(*im)); //allocates memory for the image
-  if (im==NULL){ //a alocação de memória falhou
+  struct image* im=malloc(sizeof(*im)); // allocates memory for the image
+  if (im==NULL){ // memory allocation has failed
     return NULL;
     errsave = errno;
     errno = errsave;
     }
-  im->pixel=malloc(width*height*sizeof(im->pixel)); //allocates memory for the "array" of pixels
-  if (im->pixel==NULL){ //a alocação de memória falhou
+  im->pixel=malloc(width*height*sizeof(im->pixel)); // allocates memory for the "array" of pixels
+  if (im->pixel==NULL){ // memory allocation has failed
     return NULL;
     errsave = errno;
     errno = errsave;
@@ -198,7 +198,7 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
-  free((*imgp)->pixel); //releases the memory allocated for the pixel
+  free((*imgp)->pixel); // releases the memory allocated for the pixel
   (*imgp)->pixel=NULL;
   free(*imgp); // releases the memory allocated for the Image
   imgp=NULL;
@@ -314,7 +314,7 @@ int ImageMaxval(Image img) { ///
 void ImageStats(Image img, uint8* min, uint8* max) { ///
   assert (img != NULL);
   // Insert your code here!
-  *max=img->pixel[0]; //sets the max and min to the first pixel to initialize the variables
+  *max=img->pixel[0]; // sets the max and min to the first pixel to initialize the variables
   *min=img->pixel[0];
   for (long index=0;index<img->height*img->width;index++){ //loops through the pixels of image
     if(img->pixel[index]>*max){
@@ -323,9 +323,9 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
     else if(img->pixel[index]<*min){
       *min=img->pixel[index];
     }
-    if(img->maxval==*max && *min==0){ //checks if the current values for max and min are the 
-      break;                          //highest and lowest values the pixel can get, respectively
-    }                                 //this reduces the number of iterations
+    if(img->maxval==*max && *min==0){ // checks if the current values for max and min are the 
+      break;                          // highest and lowest values the pixel can get, respectively
+    }                                 // this reduces the number of iterations
   }
 }
 
@@ -355,7 +355,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 static inline int G(Image img, int x, int y) {
   int index;
   // Insert your code here!
-  index=y*img->width+x; //this gives the index of the pixel in the array based on the coordinates, x and y, of the pixel in the image
+  index=y*img->width+x; // this gives the index of the pixel in the array based on the coordinates, x and y, of the pixel in the image
   assert (0 <= index && index < img->width*img->height);
   return index;
 }
@@ -392,11 +392,11 @@ void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   int counter=0;
-  for (long index=0;index<img->height*img->width;index++){ //loops through all the pixels
-    img->pixel[index]=img->maxval - img->pixel[index]; //sets the value of the pixel to it's opposite
+  for (long index=0;index<img->height*img->width;index++){ // loops through all the pixels
+    img->pixel[index]=img->maxval - img->pixel[index]; // sets the value of the pixel to it's opposite
     counter++;
   }
-  printf("\nNumber of iteracions (negative): %d\n",counter);
+  printf("\nNumber of iterations (negative): %d\n",counter); // prints the number of iterations
 }
 
 /// Apply threshold to image.
@@ -406,16 +406,16 @@ void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
   int counter=0;
-  for (long index=0;index<img->height*img->width;index++){
-    if(img->pixel[index]<thr){
-      img->pixel[index]=0;
+  for (long index=0;index<img->height*img->width;index++){ // loops through all the pixels
+    if(img->pixel[index]<thr){ // checks if level>=thr
+      img->pixel[index]=0; // sets the pixel to white
     }
     else{
-      img->pixel[index]=img->maxval;
+      img->pixel[index]=img->maxval; // sets the pixel to black
     }
     counter++;
   }
-  printf("\nNumber of iteracions (threshold): %d\n",counter);
+  printf("\nNumber of iterations (threshold): %d\n",counter); // prints the number of iterations
 }
 
 /// Brighten image by a factor.
@@ -428,15 +428,15 @@ void ImageBrighten(Image img, double factor) { ///
   // ? assert (factor >= 0.0);
   // Insert your code here!
   int counter=0;
-  for (long index=0;index<img->height*img->width;index++){
+  for (long index=0;index<img->height*img->width;index++){ // loops through all the pixels
     int color=img->pixel[index]*factor+0.5;  
-    if(color>img->maxval){
+    if(color>img->maxval){ // checks if level is higher than maxval
       color=img->maxval;
     }
-    img->pixel[index]=color;
+    img->pixel[index]=color; // sets the new level of the pixel
     counter++;
   }
-  printf("\nNumber of iteracions(brighten): %d\n",counter);
+  printf("\nNumber of iterations (brighten): %d\n",counter); // prints the number of iterations
 }
 
 /// Geometric transformations
@@ -464,16 +464,16 @@ Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   int counter=0;
-  Image new_img = ImageCreate(img->height, img->width, img->maxval); //Creates a new image
-  for (int x = 0; x < img->width; x++) { //Loops to run each pixel of the image
+  Image new_img = ImageCreate(img->height, img->width, img->maxval); // creates a new image
+  for (int x = 0; x < img->width; x++) { // loops through all the pixels
     for (int y = 0; y < img->height; y++) {
-      int new_index = y+(img->height-x-1)*new_img->width; //Pixel index for new_img
-      int index = x+y*img->width; //Pixel index for img
-      new_img->pixel[new_index] = img->pixel[index]; //Copies pixel from original image to the rotated image
+      int new_index = y+(img->height-x-1)*new_img->width; // pixel index for new_img
+      int index = x+y*img->width; // pixel index for img
+      new_img->pixel[new_index] = img->pixel[index]; // copies pixel from original image to the rotated image
       counter++;
     }
   }
-  printf("\nNumber of iteracions (rotate): %d\n",counter);
+  printf("\nNumber of iterations (rotate): %d\n",counter); // prints the number of iterations
   return new_img;
 }
 
@@ -489,18 +489,18 @@ Image ImageMirror(Image img) { ///
   assert (img != NULL);
   int counter=0;
   // Insert your code here!
-  Image imgm = ImageCreate(img->width, img->height, img->maxval); //Creates a new image
+  Image imgm = ImageCreate(img->width, img->height, img->maxval); // creates a new image
   int success = (imgm = ImageCreate(img->width, img->height, (uint8)img->maxval)) != NULL;
-  for (int yindex = 0; yindex < img->height; yindex++) { //Loops to run each pixel of the image
+  for (int yindex = 0; yindex < img->height; yindex++) { // loops through all the pixels
         for (int xindex = 0; xindex < img->width; xindex++) {
-            int index = yindex * img->width + xindex; //Pixel index for img
-            int indexm = yindex * img->width + (img->width - 1 - xindex); //Pixel index for imgm
-            imgm->pixel[indexm] = img->pixel[index]; //Copies pixel from original image to the mirrored image
+            int index = yindex * img->width + xindex; // pixel index for img
+            int indexm = yindex * img->width + (img->width - 1 - xindex); // pixel index for imgm
+            imgm->pixel[indexm] = img->pixel[index]; // copies pixel from original image to the mirrored image
             counter++;
         }
     }
   // Cleanup
-  printf("\nNumber of iteracions (mirror): %d\n",counter);
+  printf("\nNumber of iterations (mirror): %d\n",counter); // prints the number of iterations
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -525,18 +525,18 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
   int counter=0;
-  Image imgc = ImageCreate(w, h, img->maxval); //Creates a new image
+  Image imgc = ImageCreate(w, h, img->maxval); // creates a new image
   int success = (imgc = ImageCreate(w, h, (uint8)img->maxval)) != NULL;
-  for (long yindex=0;yindex<imgc->height;yindex++){ //Loop to run each pixel of the image created
+  for (long yindex=0;yindex<imgc->height;yindex++){ // loops through all the pixels
     for (long xindex=0;xindex<imgc->width;xindex++){
-      int indexc = yindex*imgc->width+xindex; //Pixel index for imgc
-      int index = xindex+x+(yindex+y)*img->width; //Pixel index for img
-      imgc->pixel[indexc] = img->pixel[index]; //Copies the pixel from the original image to the cropped image
+      int indexc = yindex*imgc->width+xindex; // pixel index for imgc
+      int index = xindex+x+(yindex+y)*img->width; // pixel index for img
+      imgc->pixel[indexc] = img->pixel[index]; // copies the pixel from the original image to the cropped image
       counter++;
     }
   }
   // Cleanup
-  printf("\nNumber of iteracions (crop): %d\n",counter);
+  printf("\nNumber of iterations (crop): %d\n",counter); // prints the number of iterations
   if (!success) {
     errsave = errno;
     errno = errsave;
@@ -557,15 +557,15 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
   int counter=0;
-  for (long yindex=0;yindex<img2->height;yindex++){ //Loops to run each pixel of the image
+  for (long yindex=0;yindex<img2->height;yindex++){ // loops through all the pixels
     for (long xindex=0;xindex<img2->width;xindex++){
-      int index1 = xindex+x+(yindex+y)*img1->width; //Pixel index for img1
-      int index2 = yindex*img2->width+xindex; //Pixel index for img2
-      img1->pixel[index1] = img2->pixel[index2];  //Pastes the pixel of img2 into img1
+      int index1 = xindex+x+(yindex+y)*img1->width; // pixel index for img1
+      int index2 = yindex*img2->width+xindex; // pixel index for img2
+      img1->pixel[index1] = img2->pixel[index2];  // pastes the pixel of img2 into img1
       counter++;
     }
   }
-  printf("\nNumber of iteracions (paste): %d\n",counter);
+  printf("\nNumber of iterations (paste): %d\n",counter); // prints the number of iterations
 }
 
 /// Blend an image into a larger image.
@@ -580,17 +580,17 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
   int counter=0;
-  if(alpha>1) {alpha = 1;} //Checks if alpha value is inside of the interval [0.0, 1.0]
+  if(alpha>1) {alpha = 1;} // checks if alpha value is inside of the interval [0.0, 1.0]
   if(alpha<0) {alpha = 0;}
-  for (long yindex=0;yindex<img2->height;yindex++){ //Loops to run each pixel of the image
+  for (long yindex=0;yindex<img2->height;yindex++){ // loops through all the pixels
     for (long xindex=0;xindex<img2->width;xindex++){
-      int index1 = xindex+x+((yindex+y)*img1->width); //Pixel index for img1
-      int index2 = (yindex*img2->width)+xindex; //Pixel index for img2
-      img1->pixel[index1] = (img1->pixel[index1]*(1-alpha) + img2->pixel[index2]*alpha)+0.5; //Calculates the value of the blend and modifies the pixel
+      int index1 = xindex+x+((yindex+y)*img1->width); // pixel index for img1
+      int index2 = (yindex*img2->width)+xindex; // pixel index for img2
+      img1->pixel[index1] = (img1->pixel[index1]*(1-alpha) + img2->pixel[index2]*alpha)+0.5; // calculates the value of the blend and modifies the pixel
       counter++;
     }
   }
-  printf("\nNumber of iteracions (blend): %d\n",counter);
+  printf("\nNumber of iterations (blend): %d\n",counter); // prints the number of iterations
 
 }
 
@@ -603,15 +603,15 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
   int counter=0;
-  for (long yindex=0;yindex<img2->height;yindex++){
+  for (long yindex=0;yindex<img2->height;yindex++){ // loops through all the pixels
     for (long xindex=0;xindex<img2->width;xindex++){
       counter++;
-      if (img1->pixel[xindex+x+(yindex+y)*img1->width]!=img2->pixel[xindex+yindex*img2->width]){
+      if (img1->pixel[xindex+x+(yindex+y)*img1->width]!=img2->pixel[xindex+yindex*img2->width]){ // compares the pixels of both images
         return 0;
       }
     }
   }
-  printf("\nNumber of iteracions (match): %d\n",counter);
+  printf("\nNumber of iterations (match): %d\n",counter); // prints the number of iterations
   return 1;
 }
 
@@ -624,11 +624,12 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img2 != NULL);
   // Insert your code here!
   int counter=0;
-  for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){
+  for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){ // loops through all the pixels where the first pixel of img2 could be
     for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
-      if(img1->pixel[xindex+yindex*img1->width]==img2->pixel[0]){
-        if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){
-          (*px)=xindex;
+      counter++;
+      if(img1->pixel[xindex+yindex*img1->width]==img2->pixel[0]){ // compares the pixels of img1 to the first pixel of img2
+        if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){  // checks if img1 matches img2 starting in the coordinates where the pixel was previously found
+          (*px)=xindex; // sets matching position
           (*py)=yindex;
           return 1;
         }
@@ -636,7 +637,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
       counter++;
     }
   }
-  printf("\nNumber of iteracions (locate): %d\n",counter);
+  printf("\nNumber of iterations (locate): %d\n",counter); // prints the number of iterations
   return 0;
 }
 
@@ -650,22 +651,22 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   int ddx, ddy, counter = 0;
-  Image mean = ImageCreate(img->width,img->height,img->maxval); //Creates an image to store the values
+  Image mean = ImageCreate(img->width,img->height,img->maxval); // creates an image to store the values
   uint8_t color;
-  for (long yb=0; yb<img->height; yb++){ //Loops to run each pixel of the image
+  for (long yb=0; yb<img->height; yb++){ // loops through all the pixels
     for (long xb=0; xb<img->width; xb++){
       double sum = 0, count = 0;
-      ddy=dy; //Creates a copies of 'dx' and 'dy' to be able to modify them
+      ddy=dy; // creates a copies of 'dx' and 'dy' to be able to modify them
       ddx=dx;
-      if (yb-dy<0) //Conditions to check if rectangle is inside the image
-        ddy = yb; //Changes 'ddy' or 'ddx' to the max value where the rectangle is inside the image 
+      if (yb-dy<0) //  conditions to check if rectangle is inside the image
+        ddy = yb; // changes 'ddy' or 'ddx' to the max value where the rectangle is inside the image 
       if (yb+dy>=img->height)
         ddy = img->height-yb-1;
       if (xb-dx<0)
         ddx = xb;
       if (xb+dx>=img->width)
         ddx = img->width-xb-1;
-      for (long yindex=yb-ddy;yindex<=yb+ddy;yindex++){ //Loops to run each pixel in the rectangle
+      for (long yindex=yb-ddy;yindex<=yb+ddy;yindex++){ // loops through all the pixels in the rectangle
         for (long xindex=xb-ddx;xindex<=xb+ddx;xindex++){
           sum += ImageGetPixel(img, xindex, yindex);
           count++;
@@ -673,12 +674,12 @@ void ImageBlur(Image img, int dx, int dy) { ///
         }
       }
       if (count > 0) {
-        color = (sum/count)+0.5; //Calculates the mean of the pixels
-        ImageSetPixel(mean, xb, yb, color); //Modifies the values of the pixel in the image created
+        color = (sum/count)+0.5; // calculates the mean of the pixels
+        ImageSetPixel(mean, xb, yb, color); // modifies the values of the pixel in the image created
       }
     }
   }
-  ImagePaste(img,0,0,mean); //Pastes the image 'mean' into the image given
-  ImageDestroy(&mean); //Destroys the image created
-  printf("\nNumber of iteracions (blur): %d\n",counter); //prints the number of iterations
+  ImagePaste(img,0,0,mean); // pastes the image 'mean' into the image given
+  ImageDestroy(&mean); // destroys the image created
+  printf("\nNumber of iterations (blur): %d\n",counter); // prints the number of iterations
 }
