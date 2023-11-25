@@ -118,55 +118,69 @@ int main(int ac, char* av[]) {
       InstrPrint();
     } else if (strcmp(av[k], "neg") == 0) {
       if (n < 1) { err = 2; break; }
+      InstrReset();
       fprintf(stderr, "Negating I%d\n", n-1);
       ImageNegative(img[n-1]);
+      InstrPrint();
     } else if (strcmp(av[k], "thr") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }
       uint8 thr;
       if (sscanf(av[k], "%hhu", &thr) != 1) { err = 5; break; }
+      InstrReset();
       fprintf(stderr, "Thresholding I%d at %d\n", n-1, thr);
       ImageThreshold(img[n-1], (uint8)thr);
+      InstrPrint();
     } else if (strcmp(av[k], "bri") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }
       double factor;
       if (sscanf(av[k], "%lf", &factor) != 1) { err = 5; break; }
+      InstrReset();
       fprintf(stderr, "Brightening I%d by %lf\n", n-1, factor);
       ImageBrighten(img[n-1], factor);
+      InstrPrint();
     } else if (strcmp(av[k], "create") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n >= N) { err = 3; break; }
       if (sscanf(av[k], "%d,%d", &w, &h) != 2) { err = 5; break; }
       if (w < 0 || h < 0) { err = 5; break; }   // precondition check!
+      InstrReset();
       fprintf(stderr, "Creating black image (%d,%d) -> I%d\n", w, h, n);
       img[n] = ImageCreate(w, h, PixMax);
       if (img[n] == NULL) { err = 4; break; }
       n++;
+      InstrPrint();
     } else if (strcmp(av[k], "rotate") == 0) {
       if (n < 1) { err = 2; break; }
       if (n >= N) { err = 3; break; }
+      InstrReset();
       fprintf(stderr, "Rotating I%d -> I%d\n", n-1, n);
       img[n] = ImageRotate(img[n-1]);
       if (img[n] == NULL) { err = 4; break; }
       n++;
+      InstrPrint();
     } else if (strcmp(av[k], "mirror") == 0) {
       if (n < 1) { err = 2; break; }
       if (n >= N) { err = 3; break; }
+      InstrReset();
       fprintf(stderr, "Mirroring I%d -> I%d\n", n-1, n);
       img[n] = ImageMirror(img[n-1]);
       if (img[n] == NULL) { err = 4; break; }
       n++;
+      InstrPrint();
     } else if (strcmp(av[k], "crop") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }
       if (n >= N) { err = 3; break; }
       if (sscanf(av[k], "%d,%d,%d,%d", &x, &y, &w, &h) != 4) { err = 5; break; }
       if (!ImageValidRect(img[n-1], x, y, w, h)) { err = 5; break; }   // precondition check!
+      InstrReset();
       fprintf(stderr, "Cropping I%d (%d,%d,%d,%d) -> I%d\n", n-1, x, y, w, h, n);
       img[n] = ImageCrop(img[n-1], x, y, w, h);
       if (img[n] == NULL) { err = 4; break; }
       n++;
+      InstrPrint();
     } else if (strcmp(av[k], "paste") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 2) { err = 2; break; }
@@ -174,8 +188,10 @@ int main(int ac, char* av[]) {
       w = ImageWidth(img[n-2]);
       h = ImageHeight(img[n-2]);
       if (!ImageValidRect(img[n-1], x, y, w, h)) { err = 6; break; }
+      InstrReset();
       fprintf(stderr, "Pasting I%d at I%d (%d,%d)\n", n-2, n-1, x, y);
       ImagePaste(img[n-1], x, y, img[n-2]);
+      InstrPrint();
     } else if (strcmp(av[k], "blend") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 2) { err = 2; break; }
@@ -184,34 +200,44 @@ int main(int ac, char* av[]) {
       w = ImageWidth(img[n-2]);
       h = ImageHeight(img[n-2]);
       if (!ImageValidRect(img[n-1], x, y, w, h)) { err = 6; break; }
+      InstrReset();
       fprintf(stderr, "Blending I%d with I%d@(%d,%d) with alpha=%.3f\n", n-2, n-1, x, y, alpha);
       ImageBlend(img[n-1], x, y, img[n-2], alpha);
+      InstrPrint();
     } else if (strcmp(av[k], "locate") == 0) {
       if (n < 2) { err = 2; break; }
+      InstrReset();
       fprintf(stderr, "Locating I%d in I%d\n", n-2, n-1);
       if (ImageLocateSubImage(img[n-1], &x, &y, img[n-2])) {
         printf("# FOUND (%d,%d)\n", x, y);
       } else {
         printf("# NOTFOUND\n");
       }
+      InstrPrint();
     } else if (strcmp(av[k], "blur") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }
       int dx; int dy;
       if (sscanf(av[k], "%d,%d", &dx, &dy) != 2) { err = 5; break; }
+      InstrReset();
       fprintf(stderr, "Blur I%d with %dx%d mean filter\n", n-1, 2*dx+1, 2*dy+1);
       ImageBlur(img[n-1], dx, dy);
+      InstrPrint();
     } else if (strcmp(av[k], "save") == 0) {
       if (++k >= ac) { err = 1; break; }
       if (n < 1) { err = 2; break; }
+      InstrReset();
       fprintf(stderr, "Saving %s <- I%d\n", av[k], n-1);
       if (ImageSave(img[n-1], av[k]) == 0) { err = 4; break; }
+      InstrPrint();
     } else {  // image file
       if (n >= N) { err = 3; break; }
+      InstrReset();
       fprintf(stderr, "Loading %s -> I%d\n", av[k], n);
       img[n] = ImageLoad(av[k]);
       if (img[n] == NULL) { err = 4; break; }
       n++;
+      InstrPrint();
     }
     k++;
   }

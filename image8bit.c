@@ -626,7 +626,6 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   int counter=0;
   for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){
     for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
-      counter++;
       if(img1->pixel[xindex+yindex*img1->width]==img2->pixel[0]){
         if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){
           (*px)=xindex;
@@ -634,6 +633,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
           return 1;
         }
       }
+      counter++;
     }
   }
   printf("\nNumber of iteracions (locate): %d\n",counter);
