@@ -623,15 +623,18 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
-  long long counter=0;
-  if(img1->height<img2->height&&img1->width<img2->width){return 0;} //verifies if img2 ain't bigger than img1
+  int64_t counter=0;
+  if(img1->height<img2->height&&img1->width<img2->width){ //verifies if img2 ain't bigger than img1
+    printf("\nNumber of iterations (locate): %lld\n",counter);
+    return 0;
+  }
   for (long yindex=0;yindex<(img1->height)-(img2->height);yindex++){ // loops through all the pixels where the first pixel of img2 could be
     for (long xindex=0;xindex<(img1->width)-(img2->width);xindex++){
-      counter++;
       if(img1->pixel[xindex+yindex*img1->width]==img2->pixel[0]){ // compares the pixels of img1 to the first pixel of img2
         if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){  // checks if img1 matches img2 starting in the coordinates where the pixel was previously found
           (*px)=xindex; // sets matching position
           (*py)=yindex;
+          printf("\nNumber of iterations (locate): %lld\n",counter);
           return 1;
         }
       }
@@ -679,9 +682,11 @@ void ImageBlur(Image img, int dx, int dy) { ///
         color = (sum/count)+0.5; // calculates the mean of the pixels
         ImageSetPixel(mean, xb, yb, color); // modifies the values of the pixel in the image created
       }
+    printf("\nNumber of iterations (blur): %lld\n",counter);
+    counter=0;
     }
   }
   ImagePaste(img,0,0,mean); // pastes the image 'mean' into the image given
   ImageDestroy(&mean); // destroys the image created
-  printf("\nNumber of iterations (blur): %lld\n",counter); // prints the number of iterations
+   // prints the number of iterations
 }
