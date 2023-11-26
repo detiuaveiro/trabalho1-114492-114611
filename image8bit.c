@@ -623,6 +623,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   assert(img!=NULL);
+  assert(dx>0&&dy>0);
   int ddx, ddy;
   Image mean = ImageCreate(img->width,img->height,img->maxval); // creates an image to store the values
   uint8_t color;
