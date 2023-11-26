@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include "instrumentation.h"
 
 // The data structure
@@ -634,7 +635,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
         if (ImageMatchSubImage(img1,xindex,yindex,img2)==1){  // checks if img1 matches img2 starting in the coordinates where the pixel was previously found
           (*px)=xindex; // sets matching position
           (*py)=yindex;
-          printf("\nNumber of iterations (locate): %lld\n",counter);
+          printf("\nNumber of iterations (locate): %lld\n",counter); // prints the number of iterations
           return 1;
         }
       }
@@ -655,7 +656,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   int ddx, ddy;
-  long long counter = 0;
+  uint64_t counter = 0;
   Image mean = ImageCreate(img->width,img->height,img->maxval); // creates an image to store the values
   uint8_t color;
   for (long yb=0; yb<img->height; yb++){ // loops through all the pixels
@@ -682,11 +683,9 @@ void ImageBlur(Image img, int dx, int dy) { ///
         color = (sum/count)+0.5; // calculates the mean of the pixels
         ImageSetPixel(mean, xb, yb, color); // modifies the values of the pixel in the image created
       }
-    printf("\nNumber of iterations (blur): %lld\n",counter);
-    counter=0;
     }
   }
   ImagePaste(img,0,0,mean); // pastes the image 'mean' into the image given
   ImageDestroy(&mean); // destroys the image created
-   // prints the number of iterations
+  printf("\nNumber of iterations (blur): %"PRIu64"\n",counter); // prints the number of iterations
 }
